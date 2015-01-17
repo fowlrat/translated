@@ -39,21 +39,21 @@ LLVMを最適化の対象として使用できるようになります。例え�
 Well-Formedness
 ---------------
 
-It is important to note that this document describes 'well formed' LLVM
-assembly language. There is a difference between what the parser accepts
-and what is considered 'well formed'. For example, the following
-instruction is syntactically okay, but not well formed:
+この文章が、適格（well formed）なLLVMアセンブリ言語について述べているこ
+とを強調しておく必要があります。パーサが受け入れるものと、適格なものと
+の間には違いがあります。例えば、以下の命令は文法的には正しいですが、
+適格ではありません。
 
 .. code-block:: llvm
 
     %x = add i32 1, %x
 
-because the definition of ``%x`` does not dominate all of its uses. The
-LLVM infrastructure provides a verification pass that may be used to
-verify that an LLVM module is well formed. This pass is automatically
-run by the parser after parsing input assembly and by the optimizer
-before it outputs bitcode. The violations pointed out by the verifier
-pass indicate bugs in transformation passes or input to the parser.
+なぜなら、 ``%x`` の定義がその使用法のすべてを支配していないためです。
+LLVM基盤は、LLVMモジュールが適格であることを検証するための検証パスを提
+供します。このパスは、入力されたアセンブリをパースしたあとにパーサによっ
+て自動的に実行されます。また、ビットコードを出力する前にオプティマイザ
+によっても実行されます。検証パスによって指摘された違反は、変換パスもし
+くはパーサへの入力にバグであることを示しています。
 
 .. _identifiers:
 
