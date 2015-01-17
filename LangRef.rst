@@ -9,12 +9,10 @@ LLVM Language Reference Manual
 Abstract
 ========
 
-This document is a reference manual for the LLVM assembly language. LLVM
-is a Static Single Assignment (SSA) based representation that provides
-type safety, low-level operations, flexibility, and the capability of
-representing 'all' high-level languages cleanly. It is the common code
-representation used throughout all phases of the LLVM compilation
-strategy.
+この文書は、LLVMアセンブリ言語のリファレンスマニュアルです。LLVMは、静
+的単一代入（SSA）形式を採用おり、型安全、低水準な操作、柔軟性、すべて
+の高水準な言語を簡潔に表現できる機能を提供します。LLVMは、LLVMのコン
+パイル戦略のすべての段階で使用される共通のコード表現です。
 
 Introduction
 ============
