@@ -17,26 +17,22 @@ Abstract
 Introduction
 ============
 
-The LLVM code representation is designed to be used in three different
-forms: as an in-memory compiler IR, as an on-disk bitcode representation
-(suitable for fast loading by a Just-In-Time compiler), and as a human
-readable assembly language representation. This allows LLVM to provide a
-powerful intermediate representation for efficient compiler
-transformations and analysis, while providing a natural means to debug
-and visualize the transformations. The three different forms of LLVM are
-all equivalent. This document describes the human readable
-representation and notation.
+LLVMコード表現には、3つの異なる形式があります。「インメモリコンパイラ
+IR」、「オンディスクビットコード表現（実行時コンパイラによる高速ロードに
+適す）」、「人間が読むことのできるアセンブリ言語表現」です。複数の形式
+を持つことにより、効率的な変換と解析のために強力な中間表現を提供しなが
+らも、変換のデバッグと視覚化のための自然な方法も提供しています。これら
+の3つの形式は同等です。この文書では、人間が読むことができる表現と表記
+について述べていきます。
 
-The LLVM representation aims to be light-weight and low-level while
-being expressive, typed, and extensible at the same time. It aims to be
-a "universal IR" of sorts, by being at a low enough level that
-high-level ideas may be cleanly mapped to it (similar to how
-microprocessors are "universal IR's", allowing many source languages to
-be mapped to them). By providing type information, LLVM can be used as
-the target of optimizations: for example, through pointer analysis, it
-can be proven that a C automatic variable is never accessed outside of
-the current function, allowing it to be promoted to a simple SSA value
-instead of a memory location.
+LLVMは、表現力が高く、型付けがあり、拡張性がある表現でありながらも、軽
+快で低水準であることを目指しています。また、高水準のアイデアを簡潔にマッ
+プできる程度に、LLVMを低水準にすることにより、一種の汎用IRにすることを
+目指しています（これは、多くの言語からマップすることが可能なマイクロプ
+ロセッサが汎用IRであることに類似しています）。型情報を提供することで、
+LLVMを最適化の対象として使用できるようになります。例えば、ポインタ解析
+により、Cの自動変数が現在の関数の外部から参照されないことを証明できれば、
+メモリ領域を割り当てずに、単純なSSA値を使用することが可能になります。
 
 .. _wellformed:
 
