@@ -729,67 +729,66 @@ some can only be checked when producing an object file:
 Comdats
 -------
 
-Comdat IR provides access to COFF and ELF object file COMDAT functionality.
+Comdat IRは、COFFとELFオブジェクトファイルにおけるCOMDAT機能へのアクセ
+スを提供します。
 
-Comdats have a name which represents the COMDAT key.  All global objects that
-specify this key will only end up in the final object file if the linker chooses
-that key over some other key.  Aliases are placed in the same COMDAT that their
-aliasee computes to, if any.
+Comdatは、COMDATであることを示す特有のキーを名前として持ちます。この名
+前を持つすべての大域オブジェクトのうち、リンカによって選ばれたオブジェ
+クトのみが、最終的なオブジェクトに含まれます。エイリアスは、そのエイリ
+アスが計算されたのと同じCOMDATがあればそのCOMDATに含まれます(?)。
 
-Comdats have a selection kind to provide input on how the linker should
-choose between keys in two different object files.
+Comdatは、リンカが複数のオブジェクトからどのようにオブジェクトを選択す
+るのかを示す選択種別を入力して提供します。
 
-Syntax::
+構文::
 
     $<Name> = comdat SelectionKind
 
-The selection kind must be one of the following:
+選択種別は、以下のいずれかの値を持つ必要があります。
 
 ``any``
-    The linker may choose any COMDAT key, the choice is arbitrary.
+    リンカは、任意のCOMDATキーを選択します。
 ``exactmatch``
-    The linker may choose any COMDAT key but the sections must contain the
-    same data.
+    リンカは任意のCOMDATを選択しますが、そのセクションは同じデータを保
+    持している必要があります。
 ``largest``
-    The linker will choose the section containing the largest COMDAT key.
+    リンカは、最も大きいCOMDATキーを持つセクションを選択します。
 ``noduplicates``
-    The linker requires that only section with this COMDAT key exist.
+    リンカは、COMDATキーが重複していないこと要求します。
 ``samesize``
-    The linker may choose any COMDAT key but the sections must contain the
-    same amount of data.
+    リンカは、任意のCOMDATキーを選択しますが、そのセクションは同じサイ
+    ズのデータを保持している必要があります。
 
-Note that the Mach-O platform doesn't support COMDATs and ELF only supports
-``any`` as a selection kind.
+Mach-Oプラットフォームは、選択種別として ``any`` のみをサポートする
+COMDATとELFをサポートしません。
 
-Here is an example of a COMDAT group where a function will only be selected if
-the COMDAT key's section is the largest:
+以下は、COMDATグループの例です。この例での関数はCOMDATキーのセクション
+が一番大きい場合にのみ選択されます。
 
 .. code-block:: llvm
 
-   $foo = comdat largest
-   @foo = global i32 2, comdat $foo
+   $foo = comdat largest @foo = global i32 2, comdat $foo
 
-   define void @bar() comdat $foo {
-     ret void
-   }
+   define void @bar() comdat $foo { ret void }
 
-In a COFF object file, this will create a COMDAT section with selection kind
-``IMAGE_COMDAT_SELECT_LARGEST`` containing the contents of the ``@foo`` symbol
-and another COMDAT section with selection kind
-``IMAGE_COMDAT_SELECT_ASSOCIATIVE`` which is associated with the first COMDAT
-section and contains the contents of the ``@bar`` symbol.
+COFFオブジェクトファイルの場合、選択種別が
+``IMAGE_COMDAT_SELECT_LARGEST`` であり、 ``@foo`` シンボルの内容を含む
+COMDATセクションを生成します。また、選択種別として
+``IMAGE_COMDAT_SELECT_ASSOCIATIVE`` を指定することで最初のCOMDATセクショ
+ンと関連させ、 ``@bar`` シンボルを内容として含むCOMDATセクションも生成
+します。
 
-There are some restrictions on the properties of the global object.
-It, or an alias to it, must have the same name as the COMDAT group when
-targeting COFF.
-The contents and size of this object may be used during link-time to determine
-which COMDAT groups get selected depending on the selection kind.
-Because the name of the object must match the name of the COMDAT group, the
-linkage of the global object must not be local; local symbols can get renamed
-if a collision occurs in the symbol table.
+大域オブジェクトの属性にはいくつか制限があります。対象がCOFFの場合、大
+域オブジェクトもしくはそのエイリアスは、COMDATグループと同じ名前を持つ
+必要があります。このオブジェクトの内容とサイズは、リンク時にどのCOMDAT
+グループを選択するのかを決定するために使用されます。オブジェクトの名前
+は、COMDATグループと一致している必要がありますが、もしオブジェクトのリ
+ンケージが局所であった場合、シンボルテーブルで衝突が発生した際に名前が
+変更される場合があります。このため、オブジェクトは大域である必要があり
+ます。
 
-The combined use of COMDATS and section attributes may yield surprising results.
-For example:
+COMDATとセクション属性の組み合わせにより、思わぬ結果になる場合がありま
+す。例えば、
 
 .. code-block:: llvm
 
@@ -798,14 +797,13 @@ For example:
    @g1 = global i32 42, section "sec", comdat $foo
    @g2 = global i32 42, section "sec", comdat $bar
 
-From the object file perspective, this requires the creation of two sections
-with the same name.  This is necessary because both globals belong to different
-COMDAT groups and COMDATs, at the object file level, are represented by
-sections.
+オブジェクトファイルの観点からは、これは2つのセクションを同じ名前で作成
+することを要求しています。これは、オブジェクトファイルレベルでは、両方
+の大域が異なるCOMDATグループとCOMDATに属するために必要です。
 
-Note that certain IR constructs like global variables and functions may create
-COMDATs in the object file in addition to any which are specified using COMDAT
-IR.  This arises, for example, when a global variable has linkonce_odr linkage.
+これは必要です。なぜなら、両方の大域は、異なるCOMDATグループとCOMDATに
+所属するため、オブジェクトファイルレベルでは、セクションとして表現され
+るためです。
 
 .. _namedmetadatastructure:
 
