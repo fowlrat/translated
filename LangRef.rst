@@ -689,40 +689,38 @@ Syntax::
 Aliases
 -------
 
-Aliases, unlike function or variables, don't create any new data. They
-are just a new symbol and metadata for an existing position.
+エイリアスは、関数や変数とは違い、新しいデータは何も生み出しません。エ
+イリアスは、すでに存在する位置への新たなシンボルやメタデータです。
 
-Aliases have a name and an aliasee that is either a global value or a
-constant expression.
+エイリアスは、名前と大域値もしくは定数式のエイリアシを持ちます。
 
-Aliases may have an optional :ref:`linkage type <linkage>`, an optional
-:ref:`visibility style <visibility>`, an optional :ref:`DLL storage class
-<dllstorageclass>` and an optional :ref:`tls model <tls_model>`.
+エイリアスには、:ref:`リンケージタイプ <linkage>`, :ref:`可視性
+<visibility>`, :ref:`DLLストレージクラス <dllstorageclass>`, :ref:`TLS
+モデル <tls_model>` を任意で付加します。
 
-Syntax::
+構文::
 
     @<Name> = [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal] [unnamed_addr] alias <AliaseeTy> @<Aliasee>
 
-The linkage must be one of ``private``, ``internal``, ``linkonce``, ``weak``,
-``linkonce_odr``, ``weak_odr``, ``external``. Note that some system linkers
-might not correctly handle dropping a weak symbol that is aliased.
+リンケージは、 ``private``, ``internal``, ``linkonce``, ``weak``,
+``linkonce_odr``, ``weak_odr``, ``external`` のいずれかになります。シス
+テムリンカによっては、エイリアス化された弱いシンボルを正確に除外するこ
+とに失敗する可能性があります。
 
-Alias that are not ``unnamed_addr`` are guaranteed to have the same address as
-the aliasee expression. ``unnamed_addr`` ones are only guaranteed to point
-to the same content.
+``unnamed_addr`` が付加されていないエイリアスは、エイリアシの式と同じア
+ドレスを持つことが保証されています。 ``unnamed_addr`` が付加されたエイ
+リアスは、同じ内容を指すことのみが保証されています。
 
-Since aliases are only a second name, some restrictions apply, of which
-some can only be checked when producing an object file:
+エイリアスは、別名に過ぎないので、いくつかの制限があります。そのうちの
+いくつかは、オブジェクトファイルに出力する際にのみ適用されます。
 
-* The expression defining the aliasee must be computable at assembly
-  time. Since it is just a name, no relocations can be used.
+* エイリアシを定義する式は、アセンブル時に計算できる必要があります。エ
+  イリアスは、単なる名前であるため、再配置ができないからです。
 
-* No alias in the expression can be weak as the possibility of the
-  intermediate alias being overridden cannot be represented in an
-  object file.
+* 式内で弱いエイリアスを使用できません。上書きされる可能性のある中間エ
+  イリアスをオブジェクトファイル内で表現できないためです。
 
-* No global value in the expression can be a declaration, since that
-  would require a relocation, which is not possible.
+* 大域値の宣言を式内で使用できません。これは再配置ができないためです。
 
 .. _langref_comdats:
 
