@@ -808,11 +808,11 @@ COMDATとセクション属性の組み合わせにより、思わぬ結果に�
 Named Metadata
 --------------
 
-Named metadata is a collection of metadata. :ref:`Metadata
-nodes <metadata>` (but not metadata strings) are the only valid
-operands for a named metadata.
+名前付きメタデータは、メタデータの集合体です。 :ref:`メタデータノード
+<metadata>` （ただし、メタデータ文字列ではない）は、名前付きメタデータ
+の唯一の有効なオペランドです。
 
-Syntax::
+構文::
 
     ; Some unnamed metadata nodes, which are referenced by the named metadata.
     !0 = metadata !{metadata !"zero"}
