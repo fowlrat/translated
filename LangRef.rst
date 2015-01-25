@@ -5240,7 +5240,7 @@ Examples:
 '``store``' Instruction
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Syntax:
+構文:
 """""""
 
 ::
@@ -5248,62 +5248,56 @@ Syntax:
       store [volatile] <ty> <value>, <ty>* <pointer>[, align <alignment>][, !nontemporal !<index>]        ; yields void
       store atomic [volatile] <ty> <value>, <ty>* <pointer> [singlethread] <ordering>, align <alignment>  ; yields void
 
-Overview:
+要約:
 """""""""
 
-The '``store``' instruction is used to write to memory.
+'``store``' 命令は、メモリへのストアに使用します。
 
-Arguments:
+引数:
 """"""""""
 
-There are two arguments to the ``store`` instruction: a value to store
-and an address at which to store it. The type of the ``<pointer>``
-operand must be a pointer to the :ref:`first class <t_firstclass>` type of
-the ``<value>`` operand. If the ``store`` is marked as ``volatile``,
-then the optimizer is not allowed to modify the number or order of
-execution of this ``store`` with other :ref:`volatile
-operations <volatile>`.
+``store`` 命令は、2つの引数を取ります。それは格納する値と、格納先となる
+アドレスです。 ``<pointer>`` オペランドの型は、 :ref:`第一級クラス
+<t_firstclass>` へのポインタです。 ``store`` 命令に ``volatile`` が付加
+されている場合は、他の :ref:`volatile操作 <volatile>` との間で
+``store`` 命令の実行回数や実行順序を最適化器が変更することを抑止します。
 
-If the ``store`` is marked as ``atomic``, it takes an extra
-:ref:`ordering <ordering>` and optional ``singlethread`` argument. The
-``acquire`` and ``acq_rel`` orderings aren't valid on ``store``
-instructions. Atomic loads produce :ref:`defined <memmodel>` results
-when they may see multiple atomic stores. The type of the pointee must
-be an integer type whose bit width is a power of two greater than or
-equal to eight and less than or equal to a target-specific size limit.
-``align`` must be explicitly specified on atomic stores, and the store
-has undefined behavior if the alignment is not set to a value which is
-at least the size in bytes of the pointee. ``!nontemporal`` does not
-have any defined semantics for atomic stores.
+``store`` 命令に ``atomic`` が付加されている場合は、 追加の引数として、
+必須の :ref:`ordering <ordering>` と任意の ``singlethread`` を取ります。
+``store`` 命令のorderingに、 ``acquire`` と ``acq_rel`` を指定すること
+はできません。複数のアトミックなストアを観測した場合、アトミックなロー
+ドは :ref:`defined <memmodel>` な結果となります。ポインタが指す先の型は、
+整数型である必要があります。そのビット幅は、2の累乗であり、8以上か、対
+象のサイズ制限以下である必要があります。アトミックなストアの場合、
+``align`` を明確に指定する必要があります。 もし、アライメントが少なくと
+もポインタが指す値のバイト数に設定されていない場合、そのストアの振る舞
+いは未定義になります。アトミックなストアに対して、 ``!nontemporal`` は
+意味を持ちません。
 
-The optional constant ``align`` argument specifies the alignment of the
-operation (that is, the alignment of the memory address). A value of 0
-or an omitted ``align`` argument means that the operation has the ABI
-alignment for the target. It is the responsibility of the code emitter
-to ensure that the alignment information is correct. Overestimating the
-alignment results in undefined behavior. Underestimating the
-alignment may produce less efficient code. An alignment of 1 is always
-safe. The maximum possible alignment is ``1 << 29``.
+任意の定数である ``align`` 引数は、操作のアライメントを指定します（つま
+り、メモリアドレスのアライメントです）。 ``align`` に0を指定したり、何
+も指定しない場合は、対象のABIアライメントが指定されたことになります。ア
+ライメントの情報が正確であることは、コード出力器が保証する必要がありま
+す。過度なアライメントは未定義の振る舞いを引き起こし、過小なアライメン
+トは非効率なコードとなります。アライメントを1にすることは常に安全です。
+アライメントは最大で ``1<<29`` まで指定できます。
 
-The optional ``!nontemporal`` metadata must reference a single metadata
-name ``<index>`` corresponding to a metadata node with one ``i32`` entry of
-value 1. The existence of the ``!nontemporal`` metadata on the instruction
-tells the optimizer and code generator that this load is not expected to
-be reused in the cache. The code generator may select special
-instructions to save cache bandwidth, such as the MOVNT instruction on
-x86.
+任意の ``!nontemporal`` メタデータは、 ``<index>`` で指定した名前であり、
+メタデータノードのエントリが ``i32`` 型で値が1である必要があります。命
+令に付加された ``!nontemporal`` メタデータは、最適化器とコード生成器に
+このロードをキャッシュに格納する必要がないことを伝えます。コード生成器
+は、キャッシュの帯域幅を節約するために、特別な命令を選択します。例えば
+x86ではMOVNT命令などがこれにあたります。
 
-Semantics:
+動作:
 """"""""""
 
-The contents of memory are updated to contain ``<value>`` at the
-location specified by the ``<pointer>`` operand. If ``<value>`` is
-of scalar type then the number of bytes written does not exceed the
-minimum number of bytes needed to hold all bits of the type. For
-example, storing an ``i24`` writes at most three bytes. When writing a
-value of a type like ``i20`` with a size that is not an integral number
-of bytes, it is unspecified what happens to the extra bits that do not
-belong to the type, but they will typically be overwritten.
+``<pointer>`` オペランドで指定したアドレスのメモリの内容は、
+``<value>`` へ更新されます。 ``<value>`` がスカラ型の場合、その型の全ビッ
+トを保持するために必要な最小のバイト数以上にはストアが行われません。例
+えば、 ``i24`` 型の書き込みは、上位3バイトへのストアになります。8の倍数
+ではない ``i20`` 型のような型の場合、その型に含まれないビットがどうなる
+のかは指定されていませんが、通常そのビットは上書きされることになります。
 
 Example:
 """"""""
