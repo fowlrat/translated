@@ -5097,38 +5097,36 @@ Syntax:
 Overview:
 """""""""
 
-The '``alloca``' instruction allocates memory on the stack frame of the
-currently executing function, to be automatically released when this
-function returns to its caller. The object is always allocated in the
-generic address space (address space zero).
+'``alloca``'命令は、現在実行している関数のスタックフレーム上にメモリ領
+域を確保します。このメモリ領域は、関数の実行が終了し、呼び出し元に返る
+際に、自動的に開放されます。オブジェクトは、常に通常のアドレススペース
+（アドレススペース0）に割り当てられます。
 
 Arguments:
 """"""""""
 
-The '``alloca``' instruction allocates ``sizeof(<type>)*NumElements``
-bytes of memory on the runtime stack, returning a pointer of the
-appropriate type to the program. If "NumElements" is specified, it is
-the number of elements allocated, otherwise "NumElements" is defaulted
-to be one. If a constant alignment is specified, the value result of the
-allocation is guaranteed to be aligned to at least that boundary. The
-alignment may not be greater than ``1 << 29``. If not specified, or if
-zero, the target can choose to align the allocation on any convenient
-boundary compatible with the type.
+'``alloca``'命令は、``sizeof(<type>)*NumElements``バイトのメモリを実行
+時にスタック上に確保します。"NumElements"は、割り当てる要素の数を示しま
+す。指定しない場合は、"NumElements"はデフォルト値である1になります。ア
+ライメントが指定された場合、割り当ての結果として得られる値は、少なくと
+もその指定した境界にアライメントされていることが保証されます。アライメ
+ントは、``1 << 29``よりも大きくなることはありません。アライメントが指定
+されない場合や0が指定された場合、型に応じて都合のよいアライメントが対象
+毎に自動的に選択されます。
 
-'``type``' may be any sized type.
+'``type``'は、どのようなサイズの型でも指定できます。
 
 Semantics:
 """"""""""
 
-Memory is allocated; a pointer is returned. The operation is undefined
-if there is insufficient stack space for the allocation. '``alloca``'d
-memory is automatically released when the function returns. The
-'``alloca``' instruction is commonly used to represent automatic
-variables that must have an address available. When the function returns
-(either with the ``ret`` or ``resume`` instructions), the memory is
-reclaimed. Allocating zero bytes is legal, but the result is undefined.
-The order in which memory is allocated (ie., which way the stack grows)
-is not specified.
+メモリ領域が割り当てられ、そのメモリ領域へのポインタが返ります。必要な
+メモリ領域をスタック上に確保できない場合の動作は未定義です。割り当てら
+れたメモリ領域は、関数から返る際に、自動的に解放されます。'``alloca``'
+命令は、自動変数を表す際によく使用されます。（``ret``や``resume``命令の
+いずれかにより）関数が返る際に解放されたメモリ領域は、再度利用可能にな
+ります。0バイトの領域を割り当てることも可能です。しかしその結果は未定義
+です。メモリが割り当てられる順序（例えばどの方向にスタックが成長するの
+かなど）は決まっていません。
 
 Example:
 """"""""
